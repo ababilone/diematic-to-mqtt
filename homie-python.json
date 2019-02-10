@@ -1,0 +1,9 @@
+
+{
+    "HOST": "127.0.0.1",
+    "PORT": 1883,
+    "KEEPALIVE": 10,
+    "DEVICE_ID": "boiler",
+    "DEVICE_NAME": "GTU C 123 FF",
+    "TOPIC": "homie"
+}
