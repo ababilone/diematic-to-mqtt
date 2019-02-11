@@ -8,6 +8,10 @@ def main():
     diematicToMqttWorker = DiematicToMqttWorker()
     diematicToMqttWorker.run()
 
+    # if needed, could be used as a Thread
+    # diematicToMqttWorker.start()
+    # diematicToMqttWorker.stop()
+
 if __name__ == '__main__':
     try:
         main()
