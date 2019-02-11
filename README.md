@@ -51,7 +51,7 @@ Create an [Homie](https://homieiot.github.io/) device from a connected Diematic 
 
 ### To-Do
 
-* Publish more properties (Registers mapping table)[datasheets/modbus-registers-dedietrich.xlsx]
+* Publish more properties: [Registers mapping table](datasheets/modbus-registers-dedietrich.xlsx)
 * Allow two way communication?
 * Add some settings
     * serial port in DiematicToMqttWorker
