@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import homie
 from homie import HomieNode
 from models.Diematic import Diematic
@@ -8,59 +10,59 @@ from models.DiematicDomesticHotWater import DiematicDomesticHotWater
 from models.DiematicSensors import DiematicSensors
 
 config = homie.loadConfigFile("homie-python.json")
-Homie = homie.Homie(config)
+device = homie.Device(config)
 
-diematicBurnerNode = Homie.Node("diematic-burner", "diematic-burner")
-diematicCircuitANode = Homie.Node("diematic-circuit-a", "diematic-circuit")
-diematicCircuitBNode = Homie.Node("diematic-circuit-b", "diematic-circuit")
-diematicCircuitCNode = Homie.Node("diematic-circuit-c", "diematic-circuit")
-diematicConfigurationNode = Homie.Node("diematic-configuration", "diematic-configuration")
-diematicDomesticHotWaterNode = Homie.Node("diematic-domestic-hot-water", "diematic-domestic-hot-water")
-diematicSensorsNode = Homie.Node("diematic-sensors", "diematic-sensors")
+diematicBurnerNode = device.addNode("diematic-burner", "Burner", "diematic-burner")
+diematicCircuitANode = device.addNode("diematic-circuit-a", "Circuit A", "diematic-circuit")
+diematicCircuitBNode = device.addNode("diematic-circuit-b", "Circuit B", "diematic-circuit")
+diematicCircuitCNode = device.addNode("diematic-circuit-c", "Circuit C", "diematic-circuit")
+diematicConfigurationNode = device.addNode("diematic-configuration", "Configuration", "diematic-configuration")
+diematicDomesticHotWaterNode = device.addNode("diematic-domestic-hot-water", "Domestic hot water", "diematic-domestic-hot-water")
+diematicSensorsNode = device.addNode("diematic-sensors", "Sensors", "diematic-sensors")
 
 class DiematicHomie:
     def __init__(self):
-        Homie.setFirmware("diematic-to-mqtt", "0.0.1")
+        device.setFirmware("diematic-to-mqtt", "0.0.1")
 
-        self.advertiseDiematicBurner()
-        self.advertiseDiematicCircuit(diematicCircuitANode)
-        self.advertiseDiematicCircuit(diematicCircuitBNode)
-        self.advertiseDiematicCircuit(diematicCircuitCNode)
-        self.advertiseDiematicConfiguration()
-        self.advertiseDiematicDomesticHotWater()
-        self.advertiseDiematicSensors()
+        self.burner = self.addPropertyDiematicBurner()
+        self.addPropertyDiematicCircuit(diematicCircuitANode)
+        self.addPropertyDiematicCircuit(diematicCircuitBNode)
+        self.addPropertyDiematicCircuit(diematicCircuitCNode)
+        self.addPropertyDiematicConfiguration()
+        self.addPropertyDiematicDomesticHotWater()
+        self.addPropertyDiematicSensors()
 
-        Homie.setup()
+        device.setup()
 
-    def advertiseDiematicBurner(self):
-        diematicBurnerNode.advertise("total-start-count")
-        diematicBurnerNode.advertise("total-operating-hours")
-        diematicBurnerNode.advertise("total-fuel-consumption")
+    def addPropertyDiematicBurner(self):
+        diematicBurnerNode.addProperty("total-start-count", "Total start count", "#", "integer")
+        diematicBurnerNode.addProperty("total-operating-hours", "Total operating hours", "#", "integer")
+        diematicBurnerNode.addProperty("total-fuel-consumption", "Total fuel consumption", "l", "integer")
 
     def sendDiematicBurner(self, diematicBurner):
         """
         :type diematicBurner: DiematicBurner
         """
 
-        diematicBurnerNode.setProperty("total-start-count").send(diematicBurner.totalStartCount)
-        diematicBurnerNode.setProperty("total-operating-hours").send(diematicBurner.totalOperatingHours)
-        diematicBurnerNode.setProperty("total-fuel-consumption").send(diematicBurner.totalFuelConsumption)       
+        diematicBurnerNode.getProperty("total-start-count").update(diematicBurner.totalStartCount)
+        diematicBurnerNode.getProperty("total-operating-hours").update(diematicBurner.totalOperatingHours)
+        diematicBurnerNode.getProperty("total-fuel-consumption").update(diematicBurner.totalFuelConsumption)       
     
-    def advertiseDiematicCircuit(self, diematicCircuitNode):
+    def addPropertyDiematicCircuit(self, diematicCircuitNode):
         """
         :type diematicCircuitNode: HomieNode
         """
         
-        diematicCircuitNode.advertise("ambient-temperature")
-        diematicCircuitNode.advertise("day-set-point-temperature")
-        diematicCircuitNode.advertise("night-set-point-temperature")
-        diematicCircuitNode.advertise("anti-freeze-set-point-temperature")
-        diematicCircuitNode.advertise("start-temperature")
-        diematicCircuitNode.advertise("is-dhw")
-        diematicCircuitNode.advertise("is-auto")
-        diematicCircuitNode.advertise("is-day")
-        diematicCircuitNode.advertise("is-night")
-        diematicCircuitNode.advertise("is-anti-freeze")
+        diematicCircuitNode.addProperty("ambient-temperature", "Ambient temperature", "°C", "float")
+        diematicCircuitNode.addProperty("day-set-point-temperature", "Day set point temperature", "°C", "float")
+        diematicCircuitNode.addProperty("night-set-point-temperature", "Night set point temperature", "°C", "float")
+        diematicCircuitNode.addProperty("anti-freeze-set-point-temperature", "Anti freeze set point temperature", "°C", "float")
+        diematicCircuitNode.addProperty("start-temperature", "Start temperature", "°C", "float")
+        diematicCircuitNode.addProperty("is-dhw", "Is domestic hot water", None, "boolean")
+        diematicCircuitNode.addProperty("is-auto", "Is auto", None, "boolean")
+        diematicCircuitNode.addProperty("is-day", "Is day", None, "boolean")
+        diematicCircuitNode.addProperty("is-night", "Is night", None, "boolean")
+        diematicCircuitNode.addProperty("is-anti-freeze", "Is anti freeze", None, "boolean")
 
     def sendDiematicCircuit(self, diematicCircuitNode, diematicCircuit):
         """
@@ -68,60 +70,60 @@ class DiematicHomie:
         :type diematicCircuit: DiematicCircuit
         """
         
-        diematicCircuitNode.setProperty("ambient-temperature").send(diematicCircuit.ambientTemperature)
-        diematicCircuitNode.setProperty("day-set-point-temperature").send(diematicCircuit.daySetPointTemperature)
-        diematicCircuitNode.setProperty("night-set-point-temperature").send(diematicCircuit.nightSetPointTemperature)
-        diematicCircuitNode.setProperty("anti-freeze-set-point-temperature").send(diematicCircuit.antiFreezeSetPointTemperature)
-        diematicCircuitNode.setProperty("start-temperature").send(diematicCircuit.startTemperature)
-        diematicCircuitNode.setProperty("is-dhw").send(diematicCircuit.isDhw)
-        diematicCircuitNode.setProperty("is-auto").send(diematicCircuit.isAuto)
-        diematicCircuitNode.setProperty("is-day").send(diematicCircuit.isDay)
-        diematicCircuitNode.setProperty("is-night").send(diematicCircuit.isNight)
-        diematicCircuitNode.setProperty("is-anti-freeze").send(diematicCircuit.isAntifreeze)
+        diematicCircuitNode.getProperty("ambient-temperature").update(diematicCircuit.ambientTemperature)
+        diematicCircuitNode.getProperty("day-set-point-temperature").update(diematicCircuit.daySetPointTemperature)
+        diematicCircuitNode.getProperty("night-set-point-temperature").update(diematicCircuit.nightSetPointTemperature)
+        diematicCircuitNode.getProperty("anti-freeze-set-point-temperature").update(diematicCircuit.antiFreezeSetPointTemperature)
+        diematicCircuitNode.getProperty("start-temperature").update(diematicCircuit.startTemperature)
+        diematicCircuitNode.getProperty("is-dhw").update(diematicCircuit.isDhw)
+        diematicCircuitNode.getProperty("is-auto").update(diematicCircuit.isAuto)
+        diematicCircuitNode.getProperty("is-day").update(diematicCircuit.isDay)
+        diematicCircuitNode.getProperty("is-night").update(diematicCircuit.isNight)
+        diematicCircuitNode.getProperty("is-anti-freeze").update(diematicCircuit.isAntifreeze)
 
-    def advertiseDiematicConfiguration(self):
-        diematicConfigurationNode.advertise("firmeware-version")
-        diematicConfigurationNode.advertise("year")
-        diematicConfigurationNode.advertise("month")
-        diematicConfigurationNode.advertise("day")
-        diematicConfigurationNode.advertise("day-of-week")
-        diematicConfigurationNode.advertise("hour")
-        diematicConfigurationNode.advertise("minute")
+    def addPropertyDiematicConfiguration(self):
+        diematicConfigurationNode.addProperty("firmware-version", "Firmware version", None, "string")
+        diematicConfigurationNode.addProperty("year", "Year", None, "interger")
+        diematicConfigurationNode.addProperty("month", "Month", None, "interger")
+        diematicConfigurationNode.addProperty("day", "Day", None, "interger")
+        diematicConfigurationNode.addProperty("day-of-week", "Day of week", None, "interger")
+        diematicConfigurationNode.addProperty("hour", "Hour", None, "interger")
+        diematicConfigurationNode.addProperty("minute", "Minute", None, "interger")
 
     def sendDiematicConfiguration(self, diematicConfiguration):
         """
         :type diematicConfiguration: DiematicConfiguration
         """
 
-        diematicConfigurationNode.setProperty("firmeware-version").send(diematicConfiguration.firmwareVersion)
-        diematicConfigurationNode.setProperty("year").send(diematicConfiguration.year)
-        diematicConfigurationNode.setProperty("month").send(diematicConfiguration.month)
-        diematicConfigurationNode.setProperty("day").send(diematicConfiguration.day)
-        diematicConfigurationNode.setProperty("day-of-week").send(diematicConfiguration.dayOfWeek)
-        diematicConfigurationNode.setProperty("hour").send(diematicConfiguration.hour)
-        diematicConfigurationNode.setProperty("minute").send(diematicConfiguration.minute)
+        diematicConfigurationNode.getProperty("firmware-version").update(diematicConfiguration.firmwareVersion)
+        diematicConfigurationNode.getProperty("year").update(diematicConfiguration.year)
+        diematicConfigurationNode.getProperty("month").update(diematicConfiguration.month)
+        diematicConfigurationNode.getProperty("day").update(diematicConfiguration.day)
+        diematicConfigurationNode.getProperty("day-of-week").update(diematicConfiguration.dayOfWeek)
+        diematicConfigurationNode.getProperty("hour").update(diematicConfiguration.hour)
+        diematicConfigurationNode.getProperty("minute").update(diematicConfiguration.minute)
 
-    def advertiseDiematicDomesticHotWater(self):
-        diematicDomesticHotWaterNode.advertise("temperature")
+    def addPropertyDiematicDomesticHotWater(self):
+        diematicDomesticHotWaterNode.addProperty("temperature", "Temperature", "°C", "float")
 
     def sendDiematicDomesticHotWater(self, diematicDomesticHotWater):
         """
         :type diematicDomesticHotWater: DiematicDomesticHotWater
         """
 
-        diematicDomesticHotWaterNode.setProperty("temperature").send(diematicDomesticHotWater.temperature)
+        diematicDomesticHotWaterNode.getProperty("temperature").update(diematicDomesticHotWater.temperature)
 
-    def advertiseDiematicSensors(self):
-        diematicSensorsNode.advertise("external-temperature")
-        diematicSensorsNode.advertise("heater-temperature")
+    def addPropertyDiematicSensors(self):
+        diematicSensorsNode.addProperty("external-temperature", "External temperature", "°C", "float")
+        diematicSensorsNode.addProperty("heater-temperature", "Heater temperature", "°C", "float")
 
     def sendDiematicSensors(self, diematicSensors):
         """
         :type diematicSensors: DiematicSensors
         """
 
-        diematicSensorsNode.setProperty("external-temperature").send(diematicSensors.externalTemperature)
-        diematicSensorsNode.setProperty("heater-temperature").send(diematicSensors.heaterTemperature)
+        diematicSensorsNode.getProperty("external-temperature").update(diematicSensors.externalTemperature)
+        diematicSensorsNode.getProperty("heater-temperature").update(diematicSensors.heaterTemperature)
 
     def send(self, diematic):
         """

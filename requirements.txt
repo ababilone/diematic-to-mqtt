@@ -1,3 +1,3 @@
-homie
+git+git://github.com/bodiroga/homie-python@homie-v3.0.0
 minimalmodbus
 schedule
