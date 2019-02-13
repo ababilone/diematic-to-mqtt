@@ -1,9 +1,9 @@
 
-from DiematicBurner import DiematicBurner
-from DiematicCircuit import DiematicCircuit
-from DiematicConfiguration import DiematicConfiguration
-from DiematicDomesticHotWater import DiematicDomesticHotWater
-from DiematicSensors import DiematicSensors
+from models.DiematicBurner import DiematicBurner
+from models.DiematicCircuit import DiematicCircuit
+from models.DiematicConfiguration import DiematicConfiguration
+from models.DiematicDomesticHotWater import DiematicDomesticHotWater
+from models.DiematicSensors import DiematicSensors
 
 class Diematic(object):
     def __init__(self, circuitA, circuitB, circuitC, domesticHotWater, burner, sensors, configuration):

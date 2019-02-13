@@ -38,10 +38,11 @@ class DiematicToMqttWorker(Thread):
                 raise
             except:
                 pass
+        
+        print("Worker finished")
 
     def stop(self):
         self.cancelRequested = True
 
     def publish(self):
         self.diematicHomie.send(self.diematic)
-        print('woop')
