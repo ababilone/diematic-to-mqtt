@@ -35,6 +35,9 @@ class DiematicHomie:
 
         device.setup()
 
+    def onOff(self, value):
+        return "ON" if value else "OFF"
+
     def addPropertyDiematicBurner(self):
         diematicBurnerNode.addProperty("total-start-count", "Total start count", "#", "integer", "0:99999999")
         diematicBurnerNode.addProperty("total-operating-hours", "Total operating hours", "#", "integer", "0:99999999")
@@ -58,6 +61,7 @@ class DiematicHomie:
         diematicCircuitNode.addProperty("day-set-point-temperature", "Day set point temperature", "ºC", "float", "5:30")
         diematicCircuitNode.addProperty("night-set-point-temperature", "Night set point temperature", "ºC", "float", "5:30")
         diematicCircuitNode.addProperty("anti-freeze-set-point-temperature", "Anti freeze set point temperature", "ºC", "float", "5:30")
+        diematicCircuitNode.addProperty("calculated-temperature", "Calculated temperature", "ºC", "float", "0:100")
         diematicCircuitNode.addProperty("start-temperature", "Start temperature", "ºC", "float", "0:100")
         diematicCircuitNode.addProperty("is-dhw", "Is domestic hot water", None, "boolean")
         diematicCircuitNode.addProperty("is-auto", "Is auto", None, "boolean")
@@ -75,12 +79,13 @@ class DiematicHomie:
         diematicCircuitNode.getProperty("day-set-point-temperature").update(diematicCircuit.daySetPointTemperature)
         diematicCircuitNode.getProperty("night-set-point-temperature").update(diematicCircuit.nightSetPointTemperature)
         diematicCircuitNode.getProperty("anti-freeze-set-point-temperature").update(diematicCircuit.antiFreezeSetPointTemperature)
+        diematicCircuitNode.getProperty("calculated-temperature").update(diematicCircuit.calculatedTemperature)
         diematicCircuitNode.getProperty("start-temperature").update(diematicCircuit.startTemperature)
-        diematicCircuitNode.getProperty("is-dhw").update(diematicCircuit.isDhw)
-        diematicCircuitNode.getProperty("is-auto").update(diematicCircuit.isAuto)
-        diematicCircuitNode.getProperty("is-day").update(diematicCircuit.isDay)
-        diematicCircuitNode.getProperty("is-night").update(diematicCircuit.isNight)
-        diematicCircuitNode.getProperty("is-anti-freeze").update(diematicCircuit.isAntifreeze)
+        diematicCircuitNode.getProperty("is-dhw").update(self.onOff(diematicCircuit.isDhw))
+        diematicCircuitNode.getProperty("is-auto").update(self.onOff(diematicCircuit.isAuto))
+        diematicCircuitNode.getProperty("is-day").update(self.onOff(diematicCircuit.isDay))
+        diematicCircuitNode.getProperty("is-night").update(self.onOff(diematicCircuit.isNight))
+        diematicCircuitNode.getProperty("is-anti-freeze").update(self.onOff(diematicCircuit.isAntifreeze))
 
     def addPropertyDiematicConfiguration(self):
         diematicConfigurationNode.addProperty("firmware-version", "Firmware version", None, "string")
@@ -131,10 +136,26 @@ class DiematicHomie:
         :type diematic: Diematic
         """
 
-        self.sendDiematicBurner(diematic.burner)
-        self.sendDiematicCircuit(diematicCircuitANode, diematic.circuitA)
-        self.sendDiematicCircuit(diematicCircuitBNode, diematic.circuitB)
-        self.sendDiematicCircuit(diematicCircuitCNode, diematic.circuitC)
-        self.sendDiematicConfiguration(diematic.configuration)
-        self.sendDiematicDomesticHotWater(diematic.domesticHotWater)
-        self.sendDiematicSensors(diematic.sensors)
+        if diematic == None:
+            return
+
+        if diematic.burner != None:
+            self.sendDiematicBurner(diematic.burner)
+
+        if diematic.circuitA != None:
+            self.sendDiematicCircuit(diematicCircuitANode, diematic.circuitA)
+
+        if diematic.circuitB != None:
+            self.sendDiematicCircuit(diematicCircuitBNode, diematic.circuitB)
+
+        if diematic.circuitC != None:
+            self.sendDiematicCircuit(diematicCircuitCNode, diematic.circuitC)
+
+        if diematic.configuration != None:
+            self.sendDiematicConfiguration(diematic.configuration)
+
+        if diematic.domesticHotWater != None:
+            self.sendDiematicDomesticHotWater(diematic.domesticHotWater)
+
+        if diematic.sensors != None:
+            self.sendDiematicSensors(diematic.sensors)

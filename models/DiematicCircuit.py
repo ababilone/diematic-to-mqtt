@@ -1,5 +1,5 @@
 class DiematicCircuit(object):
-    def __init__(self, ambientTemperature, daySetPointTemperature, nightSetPointTemperature, antiFreezeSetPointTemperature, derogation, sensorInfluence, startTemperature = None):
+    def __init__(self, ambientTemperature, daySetPointTemperature, nightSetPointTemperature, antiFreezeSetPointTemperature, derogation, sensorInfluence, calculatedTemperature, startTemperature = 0):
         self.ambientTemperature = ambientTemperature
         self.daySetPointTemperature = daySetPointTemperature
         self.nightSetPointTemperature = nightSetPointTemperature
@@ -7,6 +7,7 @@ class DiematicCircuit(object):
         self.derogation = derogation
         self.sensorInfluence = sensorInfluence
         self.startTemperature = startTemperature
+        self.calculatedTemperature = calculatedTemperature
 
         self.isDhw = self.derogation & 0x10 == 0x10
         self.isAuto = self.derogation & 0x8 == 0x8
